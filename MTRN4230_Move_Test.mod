@@ -7,6 +7,7 @@ MODULE MTRN4230_Move_Sample
         ! This is a procedure defined in a System Module, so you will have access to it.
         ! This will move the robot to its calibration.
 	! Test bit thingy
+!jbfejnfowe
         MoveToCalibPos;
         
         ! Call a procedure that we have defined below.
