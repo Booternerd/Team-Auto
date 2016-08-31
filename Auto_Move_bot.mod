@@ -1,6 +1,7 @@
 MODULE Auto_Move_bot
 
     PROC Main_Move_bot() 
+        ! use to test the functions made
         VAR pose p1;
         VAR robjoint p2;
         MoveToCalibPos;
