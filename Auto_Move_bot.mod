@@ -1,19 +1,4 @@
 MODULE Auto_Move_bot
-
-    PROC Main_Move_bot() 
-        ! use to test the functions made
-        VAR pose p1;
-        VAR robjoint p2;
-        MoveToCalibPos;
-        Move_Joints_Angle [20,20,20,20,20,20], v200;
-        MoveToCalibPos;
-        p1 := get_Pose();
-        p2 := get_Angles();
-        Move_Joints [175,0,147],[0,0,-1,0], v200;
-        Move_Joints p1.trans,p1.rot, v200;
-        Move_Joints [175,0,147],[0,-0.7071068,0.7071068,0], v200;
-        Move_Joints_Angle p2, v200;
-    ENDPROC
     
     PROC Move_Joints_Angle(robjoint angles, speeddata speed)
         ! Input~ 'angles':angles of each joints in degrees i.e. [10,10,10,10,10,10]
