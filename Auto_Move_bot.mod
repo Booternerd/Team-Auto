@@ -5,36 +5,36 @@ MODULE Auto_Move_bot
         VAR pose p1;
         VAR robjoint p2;
         MoveToCalibPos;
-        Move_Joints_Angle [20,20,20,20,20,20];
+        Move_Joints_Angle [20,20,20,20,20,20], v200;
         MoveToCalibPos;
         p1 := get_Pose();
         p2 := get_Angles();
-        Move_Joints [175,0,147],[0,0,-1,0];
-        Move_Joints p1.trans,p1.rot;
-        Move_Joints [175,0,147],[0,-0.7071068,0.7071068,0];
-        Move_Joints_Angle p2;
+        Move_Joints [175,0,147],[0,0,-1,0], v200;
+        Move_Joints p1.trans,p1.rot, v200;
+        Move_Joints [175,0,147],[0,-0.7071068,0.7071068,0], v200;
+        Move_Joints_Angle p2, v200;
     ENDPROC
     
-    PROC Move_Joints_Angle(robjoint angles)
+    PROC Move_Joints_Angle(robjoint angles, speeddata speed)
         ! Input~ 'angles':angles of each joints in degrees i.e. [10,10,10,10,10,10]
         ! Moves the robot based on the angles of each joints
-        MoveAbsJ [angles, [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], v100, fine, tSCup;
+        MoveAbsJ [angles, [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], speed, fine, tSCup;
     ENDPROC
     
-    PROC Move_Joints(pos p, orient o)
+    PROC Move_Joints(pos p, orient o, speeddata speed)
         ! Input: 'p'~position of end effector in mm i.e [Xpos, Ypos, Zpos]
         !        'o'~orientation of end effector in quaternion i.e. [1, 0, 0, 0]
         ! Moves the end effector based on pose by moving the joint
         ! Matlab have to perform a check to mke sure it is not out of reach
-        MoveJ [p,o,[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], v100, fine, tSCup;
+        MoveJ [p,o,[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], speed, fine, tSCup;
     ENDPROC
     
-    PROC Move_Linear(pos p, orient o)
+    PROC Move_Linear(pos p, orient o, speeddata speed)
         ! Input: 'p'~position of end effector in mm i.e [Xpos, Ypos, Zpos]
         !        'o'~orientation of end effector in quaternion i.e. [1, 0, 0, 0]
         ! Moves the end effector based on pose linearly
         ! Not recomended!:singularity, and out of reach
-        MoveL [p,o,[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], v100, fine, tSCup;
+        MoveL [p,o,[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], speed, fine, tSCup;
     ENDPROC
     
     FUNC pose get_Pose()
