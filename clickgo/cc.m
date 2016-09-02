@@ -22,7 +22,7 @@ function varargout = cc(varargin)
 
 % Edit the above text to modify the response to help cc
 
-% Last Modified by GUIDE v2.5 02-Sep-2016 11:56:49
+% Last Modified by GUIDE v2.5 02-Sep-2016 12:39:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,12 +60,14 @@ guidata(hObject, handles);
 
 % UIWAIT makes cc wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-
-% filename = 'Image1.png';
-% 
-% im = imread(filename);
-% 
-% imshow(im);
+axes(handles.axes1);
+im = imread('Image1.png');
+i1 = imshow(im);
+set(i1,'ButtonDownFcn',@i1call);
+axes(handles.axes2);
+im = imread('gte1.png');
+i2 = imshow(im);
+set(i2,'ButtonDownFcn',@i2call);
 
 %set(handles.axes1,'WindowButtonDownFcn',@clickgo)
 
@@ -116,7 +118,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-bound = get(handles.axes1,'Position')
+bound = get(handles.axes1,'Position');
 
 
 % --- Executes on mouse press over axes background.
@@ -126,3 +128,15 @@ function axes2_ButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 pos= get(hObject,'CurrentPoint')
+
+function i1call ( objectHandle , eventData )
+   axesHandle  = get(objectHandle,'Parent');
+   coordinates = get(axesHandle,'CurrentPoint')
+   coordinates = coordinates(1,1:2);
+   %// then here you can use coordinates as you want ...
+
+function i2call ( objectHandle , eventData )
+   axesHandle  = get(objectHandle,'Parent');
+   coordinates = get(axesHandle,'CurrentPoint')
+   coordinates = coordinates(1,1:2);
+   %// then here you can use coordinates as you want ...
