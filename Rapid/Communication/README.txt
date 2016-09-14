@@ -1,2 +1,0 @@
-Rapid
-Communications Module

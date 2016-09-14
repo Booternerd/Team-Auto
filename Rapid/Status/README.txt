@@ -1,2 +1,0 @@
-Rapid
-Status Module
