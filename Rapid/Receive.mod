@@ -20,7 +20,7 @@ MODULE Receive
     ! Main function
     PROC ReceiveMain()
         ! Open the connection
-        OpenConnection;
+        OpenConnection1;
         ! Set variables
         ControlIndex := 1;
         StatusIndex := 1;
@@ -36,16 +36,20 @@ MODULE Receive
             ! Else if Get instruction, push message to Get queue
             ELSEIF Type = "Status" THEN
                 PushMessage("Status");
+            ELSEIF Type = "Pause" THEN
+                StopMove;
+            ELSEIF Type = "Start" THEN
+                StartMove;
             ! Else if Close instruction, close socket
             ELSEIF Type = "Close" THEN
-                CloseConnection;
+                CloseConnection1;
                 ! Close all connections
             ENDIF
         ENDWHILE
     ENDPROC
     
     ! Open connection to client
-    PROC OpenConnection()
+    PROC OpenConnection1()
         ! Create the socket to listen for a connection on.
         VAR socketdev WelcomeSocket;
         SocketCreate WelcomeSocket;
@@ -60,7 +64,7 @@ MODULE Receive
     ENDPROC
     
     ! Close connection to client.
-    PROC CloseConnection()
+    PROC CloseConnection1()
         SocketClose ClientSocket;
     ENDPROC
         

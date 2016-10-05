@@ -15,43 +15,48 @@ MODULE Status
     
     VAR string Message;
     VAR string Param{10};
+    VAR num ParamVal{10};
+    VAR pose Poses;
+    VAR robjoint Joints;
     VAR dionum IO{4};
     VAR string SendString;
     
     PROC StatusMain()
         ! Open the connection
-        !OpenConnection;
+        OpenConnection2;
         StatusQueue{1} := "GetIO";
         StatusIndex := 2;
         WHILE TRUE DO
             WHILE StatusIndex > 1 DO
                 PopMessage;
                 IF Message = "GetAll" THEN
-                    
-                ELSEIF Message = "GetAngles" THEN
-                    
+                    UpdateString("Pose");
+                    SocketSend ClientSocket \Str:=SendString;
+                    UpdateString("Angles");
+                    SocketSend ClientSocket \Str:=SendString;
+                    UpdateString("IO");
+                    SocketSend ClientSocket \Str:=SendString;
                 ELSEIF Message = "GetPose" THEN
-                    
+                    UpdateString("Pose");
+                    SocketSend ClientSocket \Str:=SendString;
+                ELSEIF Message = "GetAngles" THEN
+                    UpdateString("Angles");
+                    SocketSend ClientSocket \Str:=SendString;
                 ELSEIF Message = "GetIO" THEN    
-                    IO{1} := GetVacRun();
-                    IO{2} := GetVacSol();
-                    IO{3} := GetConRun();
-                    IO{4} := GetConDir();
-                    FOR i FROM 1 TO 4 DO
-                        Param{i} := ValtoStr(IO{i});
-                    ENDFOR
-                    SendString := (Message+STR_WHITE+Param{1}+STR_WHITE+Param{2}+STR_WHITE+Param{3}+STR_WHITE+Param{4}+"\0A");
+                    UpdateString("IO");
+                    SocketSend ClientSocket \Str:=SendString;
                 ELSEIF Message = "GetStatus" THEN
-                    
+                    UpdateString("Status");
+                    SocketSend ClientSocket \Str:=SendString;
                 ELSEIF Message = "Close" THEN
-                    CloseConnection;
+                    CloseConnection2;
                 ENDIF
             ENDWHILE
         ENDWHILE        
     ENDPROC
     
     ! Open connection to client
-    PROC OpenConnection()
+    PROC OpenConnection2()
         ! Create the socket to listen for a connection on.
         VAR socketdev WelcomeSocket;
         SocketCreate WelcomeSocket;
@@ -66,7 +71,7 @@ MODULE Status
     ENDPROC
     
     ! Close connection to client.
-    PROC CloseConnection()
+    PROC CloseConnection2()
         SocketClose ClientSocket;
     ENDPROC
     
@@ -110,6 +115,46 @@ MODULE Status
         FOR i FROM 1 TO 9 DO
             StatusQueue{i} := StatusQueue{i+1};
         ENDFOR
+    ENDPROC
+    
+    PROC UpdateString(string Status)
+        SendString := Message;
+        IF Status = "Pose" THEN
+            Poses := GetPose();
+            ParamVal{1} := Poses.trans.x;
+            ParamVal{2} := Poses.trans.y;
+            ParamVal{3} := Poses.trans.z;
+            ParamVal{4} := Poses.rot.q1;
+            ParamVal{5} := Poses.rot.q2;
+            ParamVal{6} := Poses.rot.q3;
+            ParamVal{7} := Poses.rot.q4;
+            FOR i FROM 1 TO 7 DO
+                Param{i} := ValtoStr(ParamVal{i});
+                SendString := SendString+STR_WHITE+Param{i};
+            ENDFOR
+        ELSEIF Status = "Angles" THEN
+            Joints := GetAngles();
+            ParamVal{1} := Joints.rax_1;
+            ParamVal{2} := Joints.rax_2;
+            ParamVal{3} := Joints.rax_3;
+            ParamVal{4} := Joints.rax_4;
+            ParamVal{5} := Joints.rax_5;
+            ParamVal{6} := Joints.rax_6;
+            FOR i FROM 1 TO 6 DO
+                Param{i} := ValtoStr(ParamVal{i});
+                SendString := SendString+STR_WHITE+Param{i};
+            ENDFOR
+        ELSEIF Status = "IO" THEN
+            ParamVal{1} := GetVacRun();
+            ParamVal{2} := GetVacSol();
+            ParamVal{3} := GetConRun();
+            ParamVal{4} := GetConDir();
+            FOR i FROM 1 TO 4 DO
+                Param{i} := ValtoStr(ParamVal{i});
+                SendString := SendString+STR_WHITE+Param{i};
+            ENDFOR
+        ENDIF
+        SendString := SendString+"\0A";
     ENDPROC
     
 ENDMODULE

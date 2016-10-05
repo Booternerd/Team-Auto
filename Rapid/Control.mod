@@ -12,11 +12,11 @@ MODULE Control
     
     ! Main function
     PROC ControlMain()
-        ControlQueue{1} := "MoveJointsAngle 10 10 10 10 10 10 3";
-        ControlQueue{2} := "MoveJointsAngle 0 0 0 0 0 0 5";
-        ControlQueue{3} := "MoveJointsAngle -20 20 -20 20 -20 20 1";
-        ControlQueue{4} := "MoveJointsAngle 0 0 0 0 0 0 5";
-        ControlIndex := 5;
+        !ControlQueue{1} := "MoveJointsAngle 10 10 10 10 10 10 3";
+        !ControlQueue{2} := "MoveJointsAngle 0 0 0 0 0 0 5";
+        !ControlQueue{3} := "MoveJointsAngle -20 20 -20 20 -20 20 1";
+        !ControlQueue{4} := "MoveJointsAngle 0 0 0 0 0 0 5";
+        !ControlIndex := 5;
         WHILE TRUE DO
             WHILE ControlIndex > 1 DO
                 PopMessage;
