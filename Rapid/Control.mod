@@ -21,13 +21,13 @@ MODULE Control
             WHILE ControlIndex > 1 DO
                 PopMessage;
                 DecodeMessage;
-                IF Command = "MoveJointsAngle" THEN
+                IF Command = "MA" THEN
                     UpdateSpeed(Param{7});
                     MoveJointsAngle [Param{1},Param{2},Param{3},Param{4},Param{5},Param{6}],Speed;
-                ELSEIF Command = "MoveJoints" THEN
+                ELSEIF Command = "MJ" THEN
                     UpdateSpeed(Param{8});
                     MoveJoints [Param{1},Param{2},Param{3}],[Param{4},Param{5},Param{6},Param{7}],Speed;
-                ELSEIF Command = "MoveLinear" THEN
+                ELSEIF Command = "ML" THEN
                     UpdateSpeed(Param{8});
                     MoveLinear [Param{1},Param{2},Param{3}],[Param{4},Param{5},Param{6},Param{7}],Speed;
                 ELSEIF Command = "SetConRun" THEN

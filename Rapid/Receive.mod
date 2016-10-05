@@ -32,10 +32,10 @@ MODULE Receive
             ExtractType;
             ! If Set instruction, push message to Set queue
             IF Type = "Control" THEN
-                PushMessage("Control");
+                PushMessage("C");
             ! Else if Get instruction, push message to Get queue
             ELSEIF Type = "Status" THEN
-                PushMessage("Status");
+                PushMessage("S");
             ELSEIF Type = "Pause" THEN
                 StopMove;
             ELSEIF Type = "Start" THEN
