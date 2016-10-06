@@ -68,6 +68,7 @@ MODULE Control
             ENDIF
             StopMove;
             ClearPath;
+            StartMove;
             TRYNEXT;
     ENDPROC
     
@@ -187,6 +188,7 @@ MODULE Control
             ENDIF
             StopMove;
             ClearPath;
+            StartMove;
             TRYNEXT;
     ENDPROC
     
@@ -218,6 +220,7 @@ MODULE Control
             ENDIF
             StopMove;
             ClearPath;
+            StartMove;
             TRYNEXT;
     ENDPROC
     
@@ -249,6 +252,7 @@ MODULE Control
             ENDIF
             StopMove;
             ClearPath;
+            StartMove;
             TRYNEXT;    
     ENDPROC
     
