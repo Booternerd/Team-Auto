@@ -233,7 +233,6 @@ MODULE Control
         VAR jointtarget jointpos2;
         VAR robtarget jointpos3;
         
-        jointpos3 := CalcRobT([[Dummy{1},Dummy{2},Dummy{3},Dummy{4},Dummy{5},Dummy{6}],[9E9,9E9,9E9,9E9,9E9,9E9]], tSCup);
         jointpos2 := CalcJointT(jointpos3, tSCup, \ErrorNumber:=myerrnum);
         
         IF myerrnum = 1135 OR myerrnum = ERR_ROBLIMIT THEN
@@ -255,6 +254,30 @@ MODULE Control
             StartMove;
             TRYNEXT;    
     ENDPROC
+    
+    FUNC dionum getRP(pose P)
+        VAR dionum r;
+        VAR errnum myerrnum;
+        VAR jointtarget jointpos2;
+        VAR robtarget jointpos3;
+        
+        jointpos3 := [P.trans,P.rot,[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+        jointpos2 := CalcJointT(jointpos3, tSCup, \ErrorNumber:=myerrnum);
+        
+        RETURN r; 
+        ERROR
+            IF ERRNO = ERR_PATH_STOP THEN
+                StopMove;
+                ClearPath;
+                StorePath;
+                RestoPath;
+                StartMove;
+            ENDIF
+            StopMove;
+            ClearPath;
+            StartMove;
+            TRYNEXT;
+    ENDFUNC
     
     PROC SetVacRun(num Value)
         ! Switch VacRun

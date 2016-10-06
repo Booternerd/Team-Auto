@@ -9,7 +9,7 @@ MODULE Status
     ! The host and port that we will be listening for a connection on.
     !CONST string Host := "192.168.2.1";
     CONST string Host := "127.0.0.1";   ! Virtual
-    CONST num Port := 1031;
+    CONST num Port := 1041;
     
     ! The socket connected to the client.
     VAR socketdev ClientSocket;
@@ -22,13 +22,11 @@ MODULE Status
     VAR dionum IO{4};
     VAR string SendString;
     
-    VAR intnum int_move_stop; 
     
     PROC StatusMain()
         ! Open the connection
         OpenConnection2;
-        CONNECT int_move_stop WITH trap_move_stop;
-        ISignalDO DOP, 1, int_move_stop;
+
         NotClose := TRUE;
         WHILE NotClose DO
             WHILE StatusIndex > 1 DO
@@ -56,13 +54,10 @@ MODULE Status
             ENDWHILE
         ENDWHILE   
         CloseConnection2;
+        ! Add stuff to handle socket error
+        ERROR
+            TRYNEXT;
     ENDPROC
-    
-    TRAP trap_move_stop
-        SetDO DO10_3, 0;
-        SetDO DO10_4, 0;
-        WaitDI DI10_1, 1;
-    ENDTRAP
     
     ! Open connection to client
     PROC OpenConnection2()
@@ -77,6 +72,9 @@ MODULE Status
         SocketAccept WelcomeSocket, ClientSocket;
         ! Close the welcome socket, as it is no longer needed.
         SocketClose WelcomeSocket;
+        ! Add stuff to handle socket error
+        ERROR
+            TRYNEXT;
     ENDPROC
     
     ! Close connection to client.
@@ -161,7 +159,7 @@ MODULE Status
             ParamVal{2} := GetVacSol();
             ParamVal{3} := GetConRun();
             ParamVal{4} := GetConDir();
-            ParamVal{5} := DI10_1;
+          !  ParamVal{5} := DI10_1;
             FOR i FROM 1 TO 4 DO
                 Param{i} := ValtoStr(ParamVal{i});
                 SendString := SendString+STR_WHITE+Param{i};

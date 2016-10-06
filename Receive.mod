@@ -13,7 +13,7 @@ MODULE Receive
     ! The host and port that we will be listening for a connection on.
     !CONST string Host := "192.168.2.1";
     CONST string Host := "127.0.0.1";   ! Virtual
-    CONST num Port := 1030;
+    CONST num Port := 1040;
     
     ! The socket connected to the client.
     VAR socketdev ClientSocket;
@@ -21,10 +21,15 @@ MODULE Receive
     VAR string Type;    
     VAR string Message;
     
+    VAR intnum int_move_stop; 
+    
     ! Main function
     PROC ReceiveMain()
         ControlQueue:=["","","","","","","","","",""];
         DummyQueue:=["","","","","","","","","",""];
+        
+        CONNECT int_move_stop WITH trap_move_stop;
+        ISignalDO DOP, 1, int_move_stop;
         ! Open the connection
         OpenConnection1;
         ! Set variables
@@ -58,7 +63,15 @@ MODULE Receive
             ENDIF
         ENDWHILE
         CloseConnection1;
+        ERROR
+            TRYNEXT;
     ENDPROC
+    
+    TRAP trap_move_stop
+        SetDO DO10_3, 0;
+        SetDO DO10_4, 0;
+        WaitDI DI10_1, 1;
+    ENDTRAP
     
     ! Open connection to client
     PROC OpenConnection1()
@@ -73,6 +86,8 @@ MODULE Receive
         SocketAccept WelcomeSocket, ClientSocket;
         ! Close the welcome socket, as it is no longer needed.
         SocketClose WelcomeSocket;
+        ERROR
+            TRYNEXT;
     ENDPROC
     
     ! Close connection to client.
