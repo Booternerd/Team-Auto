@@ -4,12 +4,13 @@ MODULE Status
     PERS num StatusIndex;
     PERS string StatusQueue{10};
     PERS bool NotClose;
+    PERS bool Reachable;
     
     ! Variable declaration
     ! The host and port that we will be listening for a connection on.
     !CONST string Host := "192.168.2.1";
     CONST string Host := "127.0.0.1";   ! Virtual
-    CONST num Port := 1041;
+    CONST num Port := 1073;
     
     ! The socket connected to the client.
     VAR socketdev ClientSocket;
@@ -19,14 +20,12 @@ MODULE Status
     VAR num ParamVal{10};
     VAR pose Poses;
     VAR robjoint Joints;
-    VAR dionum IO{4};
     VAR string SendString;
     
     
     PROC StatusMain()
         ! Open the connection
         OpenConnection2;
-
         NotClose := TRUE;
         WHILE NotClose DO
             WHILE StatusIndex > 1 DO
@@ -38,6 +37,7 @@ MODULE Status
                     SocketSend ClientSocket \Str:=SendString;
                     UpdateString("IO");
                     SocketSend ClientSocket \Str:=SendString;
+                    UpdateString("Status");
                 ELSEIF Message = "GetPose" THEN
                     UpdateString("Pose");
                     SocketSend ClientSocket \Str:=SendString;
@@ -54,8 +54,13 @@ MODULE Status
             ENDWHILE
         ENDWHILE   
         CloseConnection2;
-        ! Add stuff to handle socket error
         ERROR
+            IF ERRNO=ERR_SOCK_TIMEOUT THEN
+                RETRY;
+            ELSEIF ERRNO=ERR_SOCK_CLOSED THEN
+                CloseConnection2;
+                OpenConnection2;
+            ENDIF
             TRYNEXT;
     ENDPROC
     
@@ -164,6 +169,14 @@ MODULE Status
                 Param{i} := ValtoStr(ParamVal{i});
                 SendString := SendString+STR_WHITE+Param{i};
             ENDFOR
+        ELSEIF Status = "Status" THEN
+            SendString := "4";
+            IF Reachable = TRUE THEN
+                Param{1} := "1";
+            ELSE
+                Param{1} := "0";
+            ENDIF
+            SendString := SendString+STR_WHITE+Param{1};
         ENDIF
         !error=reach,socketerror,estop,close
         SendString := SendString+"\0A";

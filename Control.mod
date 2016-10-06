@@ -1,12 +1,26 @@
 MODULE Control
     
-    ! Persistent variable declaration
+!===================
+! MTRN4230 Robotics
+! Team Auto
+! Control Module
+!===================
+
+! Description: For controlling robot motion and setting I/O (vacuum and conveyor)
+    
+    !----------------------
+    ! VARIABLE DECLARATION
+    !----------------------
+    
+    ! Declare multitasking variables
     PERS num ControlIndex;
     PERS num DummyIndex;
     PERS string ControlQueue{10};
     PERS string DummyQueue{10};
     PERS bool NotClose;
+    PERS bool Reachable;
     
+    ! Declare global variables
     VAR string Message;
     VAR string DummyMessage;
     VAR string Command;
@@ -16,10 +30,15 @@ MODULE Control
     VAR num DummyNum;
     VAR speeddata Speed;
     
+    !---------------
+    ! MAIN FUNCTION
+    !---------------
+
+    ! Inputs:  [None]
+    ! Outputs: [None]
+    ! Comment: Main routine for Control Module
     ! Main function
     PROC ControlMain()
-        ControlQueue:=["","","","","","","","","",""];
-        DummyQueue:=["","","","","","","","","",""];
         NotClose := TRUE;
         WHILE NotClose DO
             WHILE ControlIndex > 1 DO
@@ -33,18 +52,9 @@ MODULE Control
                 ELSEIF Command = "MJ" THEN
                     UpdateSpeed(Param{8});
                     MoveJoints [Param{1},Param{2},Param{3}],[Param{4},Param{5},Param{6},Param{7}],Speed;
-                    ! errorcheck()
-                    ! Use Dummy{x}
-                    ! REMOVE THE BELOW
-!                        DecodeDummy;
-!                        WaitTime 1;
-!                        MoveToCalibPos;
-!                        WaitTime 1;
-!                        MoveJointsAngle [Dummy{1},Dummy{2},Dummy{3},Dummy{4},Dummy{5},Dummy{6}],Speed;
                 ELSEIF Command = "ML" THEN
                     UpdateSpeed(Param{8});
                     MoveLinear [Param{1},Param{2},Param{3}],[Param{4},Param{5},Param{6},Param{7}],Speed;
-                    ! Use Dummy{x}
                 ELSEIF Command = "SetConRun" THEN
                     SetConRun Param{1};
                 ELSEIF Command = "SetConDir" THEN
@@ -72,6 +82,13 @@ MODULE Control
             TRYNEXT;
     ENDPROC
     
+    !------------------------
+    ! MULTITASKING FUNCTIONS
+    !------------------------
+    
+    ! Inputs:  
+    ! Outputs: 
+    ! Comment: 
     PROC PopMessage()
         Message := ControlQueue{1};
         ControlIndex := ControlIndex-1;
@@ -87,6 +104,10 @@ MODULE Control
             DummyQueue{i} := DummyQueue{i+1};
         ENDFOR
     ENDPROC
+    
+    !----------------------------------
+    ! COMMUNICATION PROTOCOL FUNCTIONS
+    !----------------------------------
     
     PROC DecodeMessage()
         VAR num Length; 
@@ -161,6 +182,10 @@ MODULE Control
         ENDIF
     ENDPROC
     
+    !------------------
+    ! MOTION FUNCTIONS
+    !------------------
+    
     PROC MoveJointsAngle(robjoint angles, speeddata speed)
         ! Input~ 'angles':angles of each joints in degrees i.e. [10,10,10,10,10,10]
         ! Moves the robot based on the angles of each joints
@@ -174,8 +199,10 @@ MODULE Control
         jointpos2 := CalcJointT(jointpos3, tSCup, \ErrorNumber:=myerrnum);
         IF myerrnum = 1135 OR myerrnum = ERR_ROBLIMIT THEN
             !ERR_ROBLIMIT
+            Reachable := FALSE;
             TPWrite "Joint can not be reached. =P";
-        Else
+        ELSE
+            Reachable := TRUE;
             MoveAbsJ [angles, [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], speed, fine, tSCup;
         ENDIF
         ERROR
@@ -206,8 +233,10 @@ MODULE Control
         
         IF myerrnum = 1135 OR myerrnum = ERR_ROBLIMIT THEN
             !ERR_ROBLIMIT
+            Reachable := FALSE;
             TPWrite "Joint can not be reached. =P";
-        Else
+        ELSE
+            Reachable := TRUE;
             MoveJ [p,o,[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], speed, fine, tSCup;
         ENDIF
         ERROR
@@ -233,12 +262,13 @@ MODULE Control
         VAR jointtarget jointpos2;
         VAR robtarget jointpos3;
         
+        Reachable := TRUE;
         jointpos2 := CalcJointT(jointpos3, tSCup, \ErrorNumber:=myerrnum);
         
         IF myerrnum = 1135 OR myerrnum = ERR_ROBLIMIT THEN
             !ERR_ROBLIMIT
             TPWrite "Joint can not be reached. =P";
-        Else
+        ELSE
             MoveL [p,o,[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]], speed, fine, tSCup;
         ENDIF
         ERROR
@@ -279,15 +309,14 @@ MODULE Control
             TRYNEXT;
     ENDFUNC
     
+    !-----------------------
+    ! I/O SETTING FUNCTIONS
+    !-----------------------
+    
+    ! Input:  
+    ! Output:
+    ! Comment: 
     PROC SetVacRun(num Value)
-        ! Switch VacRun
-        IF Value = 2 THEN
-            IF DOutput(DO10_1) = 1 THEN          ! If VacRun On
-                Value := 0;              ! Turn VacRun Off
-            ELSEIF DOutput(DO10_1) = 0 THEN      ! If VacRun Off
-                Value := 1;              ! Turn VacRun On
-            ENDIF
-        ENDIF
         ! Turn VacRun On
         IF Value = 1 THEN
             SetDO DO10_1, 1;            ! VacRun = 1
@@ -299,23 +328,11 @@ MODULE Control
     ENDPROC
     
     PROC SetVacSol(num Value)
-        ! Switch VacSol
-        IF Value = 2 THEN
-            IF DOutput(DO10_1) = 1 THEN          ! If VacRun On      
-                IF DOutput(DO10_2) = 1 THEN          ! If VacSuck On
-                    Value := 0;                 ! Turn VacSuck Off
-                ELSEIF DOutput(DO10_2) = 0 THEN      ! If VacSuck Off 
-                    Value := 1;                 ! Turn VacSuck On
-                ENDIF            
-            ELSEIF DOutput(DO10_1) = 0 THEN      ! If VacRun Off
-                Value := 0;                 ! Turn VacSuck Off
-            ENDIF
-        ENDIF
         ! Turn VacSol On
         IF Value = 1 THEN
-            IF DOutput(DO10_1) = 1 THEN          ! If VacRun On
+            IF DO10_1 = 1 THEN          ! If VacRun On
                 SetDO DO10_2, 1;            ! VacSuck = 1           
-            ELSEIF DOutput(DO10_1) = 0 THEN      ! If VacRun Off (?REDUNDANT?)           
+            ELSEIF DO10_1 = 0 THEN      ! If VacRun Off (?REDUNDANT?)           
                 SetDO DO10_2, 0;            ! VacSuck = 0
             ENDIF
         ! Turn VacSuck Off
@@ -324,48 +341,39 @@ MODULE Control
         ENDIF   
     ENDPROC
     
+    ! Inputs:  Number variable 'Value' (0-1)
+    ! Outputs: [None]
+    ! Comment: Enables and disables conveyor
     PROC SetConRun(num Value)
-        ! Switch ConRun
-        IF Value = 2 THEN
-            IF DI10_1 = 1 THEN
-                IF DOutput(DO10_3) = 1 THEN
-                    Value := 0;         
-                ELSEIF DOutput(DO10_3) = 0 THEN
-                    Value := 1;
-                ENDIF 
-            ELSE
-                SetDO DO10_3, 0;
+        IF Value = 1 THEN           ! If 'Value' is 1
+            IF DI10_1 = 1 THEN          ! If 'ConStat' set
+                SetDO DO10_3, 1;            ! Set 'ConRun' (on)
+            ELSE                        ! Else if 'Constat' cleared
+                SetDO DO10_3, 0;            ! Clear 'ConRun' (off)
             ENDIF
-        ENDIF
-        ! Turn ConRun On
-        IF Value = 1 THEN
-            IF DI10_1 = 1 THEN
-                SetDO DO10_3, 1;
-            ELSE
-                SetDO DO10_3, 0;
-            ENDIF
-        ! Turn ConRun Off
-        ELSEIF Value = 0 THEN
-            SetDO DO10_3, 0;
+        ELSEIF Value = 0 THEN       ! Else if 'Value' is 0
+            SetDO DO10_3, 0;            ! Clear 'ConRun' (off)
         ENDIF
     ENDPROC
     
+    ! Inputs:  Number variable 'Value' (0-1)
+    ! Outputs: [None]
+    ! Comment: Sets conveyor direction
     PROC SetConDir(num Value)
-        ! Switch ConDir
-        IF Value = 2 THEN
-            IF DOutput(DO10_4) = 1 THEN
-                Value := 0;        
-            ELSEIF DOutput(DO10_4) = 0 THEN
-                Value := 1;
-            ENDIF
-        ENDIF
-        ! Turn ConDir On
-        IF Value = 1 THEN
-            SetDO DO10_4, 1;
-        ! Turn ConDir Off
-        ELSEIF Value = 0 THEN
-            SetDO DO10_4, 0;
+        IF Value = 1 THEN           ! If 'Value' is 1
+            SetDO DO10_4, 1;            ! Set 'ConDir' (forward)
+        ELSEIF Value = 0 THEN       ! Else if 'Value' is 0
+            SetDO DO10_4, 0;            ! Clear 'ConDir' (backward)
         ENDIF
     ENDPROC
-    
+
+!------------------------------------
+! CHANGE LOG
+!------------------------------------
+! 22/08/1994: Tyson Chan
+!             <Insert Changes Made>
+! dd/MM/yyyy: Ankur Goel
+!             <Insert Other Changes>
+!------------------------------------
+
 ENDMODULE

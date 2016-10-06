@@ -8,12 +8,13 @@ MODULE Receive
     PERS string DummyQueue{10};
     PERS string StatusQueue{10};
     PERS bool NotClose;
+    PERS bool Reachable;
     
     ! Variable declaration
     ! The host and port that we will be listening for a connection on.
     !CONST string Host := "192.168.2.1";
     CONST string Host := "127.0.0.1";   ! Virtual
-    CONST num Port := 1040;
+    CONST num Port := 1072;
     
     ! The socket connected to the client.
     VAR socketdev ClientSocket;
@@ -25,18 +26,19 @@ MODULE Receive
     
     ! Main function
     PROC ReceiveMain()
-        ControlQueue:=["","","","","","","","","",""];
-        DummyQueue:=["","","","","","","","","",""];
-        
-        CONNECT int_move_stop WITH trap_move_stop;
-        ISignalDO DOP, 1, int_move_stop;
+        ControlQueue := ["","","","","","","","","",""];
+        DummyQueue := ["","","","","","","","","",""];
+        StatusQueue := ["","","","","","","","","",""];
+        NotClose := TRUE;
+        Reachable := TRUE;
+        !CONNECT int_move_stop WITH trap_move_stop;
+        !ISignalDO DOP, 1, int_move_stop;
         ! Open the connection
         OpenConnection1;
         ! Set variables
         ControlIndex := 1;
         StatusIndex := 1;
         DummyIndex := 1;
-        NotClose := TRUE;
         ! Infinite loop
         WHILE NotClose DO
             ! Poll the socket for a string
@@ -64,6 +66,12 @@ MODULE Receive
         ENDWHILE
         CloseConnection1;
         ERROR
+            IF ERRNO=ERR_SOCK_TIMEOUT THEN
+                RETRY;
+            ELSEIF ERRNO=ERR_SOCK_CLOSED THEN
+                CloseConnection1;
+                OpenConnection1;
+            ENDIF
             TRYNEXT;
     ENDPROC
     
