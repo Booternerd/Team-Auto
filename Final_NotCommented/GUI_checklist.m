@@ -1,3 +1,17 @@
+% ======================================================================
+% MTRN4230 ROBOTICS 
+% Team Auto (Group 5)
+% ======================================================================
+%
+% Function: Checklist GUI prompted when Main function is running. Runs in
+%           modal mode so that it remains in front. Close Fcn turned off so
+%           User cannot force a close.
+%
+% Input:    NaN
+%
+% Output:   NaN
+
+
 function varargout = GUI_checklist(varargin)
 % GUI_CHECKLIST MATLAB code for GUI_checklist.fig
 %      GUI_CHECKLIST, by itself, creates a new GUI_CHECKLIST or raises the existing
@@ -66,8 +80,6 @@ guidata(hObject, handles);
 
 
 
-
-
 % UIWAIT makes GUI_checklist wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
@@ -83,10 +95,8 @@ function varargout = GUI_checklist_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
+% Make GUI modal
 set(handles.guifig,'WindowStyle','Modal');
-
-
 
 
 % --- Executes on button press in checkbox1.
@@ -96,6 +106,9 @@ function checkbox1_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox1
+
+% Grab values for all checkboxes, if all are checked (Value = 1) then turn
+% visibility of close button on.
 
 s1 = get(handles.checkbox1,'Value');
 s2 = get(handles.checkbox2,'Value');
@@ -125,6 +138,9 @@ function checkbox2_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox2
 
+% Grab values for all checkboxes, if all are checked (Value = 1) then turn
+% visibility of close button on.
+
 s1 = get(handles.checkbox1,'Value');
 s2 = get(handles.checkbox2,'Value');
 s3 = get(handles.checkbox3,'Value');
@@ -152,6 +168,9 @@ function checkbox3_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox3
 
+% Grab values for all checkboxes, if all are checked (Value = 1) then turn
+% visibility of close button on.
+
 s1 = get(handles.checkbox1,'Value');
 s2 = get(handles.checkbox2,'Value');
 s3 = get(handles.checkbox3,'Value');
@@ -178,6 +197,9 @@ function checkbox4_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox4
+
+% Grab values for all checkboxes, if all are checked (Value = 1) then turn
+% visibility of close button on.
 
 s1 = get(handles.checkbox1,'Value');
 s2 = get(handles.checkbox2,'Value');
@@ -208,6 +230,9 @@ function checkbox5_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox5
+
+% Grab values for all checkboxes, if all are checked (Value = 1) then turn
+% visibility of close button on.
 
 s1 = get(handles.checkbox1,'Value');
 s2 = get(handles.checkbox2,'Value');
@@ -262,9 +287,8 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%hObject
-% eventdata
-% handles
+% If button is pressed after visibility is turned on, then close the
+% checklist GUI
 
 p1 = get(handles.pushbutton1,'Value');
 
@@ -279,7 +303,7 @@ end;
 
     
 
-
+% Forces GUI to remain uncloseable.
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)

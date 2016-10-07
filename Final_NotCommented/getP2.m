@@ -1,3 +1,21 @@
+% ======================================================================
+% MTRN4230 ROBOTICS 
+% Team Auto (Group 5)
+% ======================================================================
+%
+% Function: Gets position of real world coordinates from the pixel
+%           coordinates.
+%
+% Input:    pixel x coordinate, pixel y coordinate
+%           CAng          = value for rotation
+%           xoT,yoT       = Robot pixel center for Table
+%           xoC,yoC       = Robot pixel center for Conveyer
+%           xv,yv         = Offsets
+%           xp2mmT,yp2mmT = Pixel to Real distance ratio for Table
+%           yp2mmC,yp2mmC = Pixel to Real distance ratio for Conveyer
+%
+% Output:   Coordinates for real world X and Y
+
 function [X,Y] = getP2(x,y,Pz)
 
 load('c2g2.mat');
@@ -27,9 +45,6 @@ if Pz == 32.1
 
     X = (xt - xt2)*xp2mmC;
     Y = (yt - yt2)*yp2mmC;
-
-%     X = (xt - xoC)*xp2mmC;
-%     Y = (yt - yoC)*yp2mmC;
     
 else
     X = [];

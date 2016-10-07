@@ -1,3 +1,16 @@
+% ======================================================================
+% MTRN4230 ROBOTICS 
+% Team Auto (Group 5)
+% ======================================================================
+%
+% Function: Assigns a Pz value according to the inputted coordinates and
+%           knowledge of which image was selected for the click and go
+%           function.
+%
+% Input:    x coordinate, y coordinate, selected Image number
+%
+% Output:   Pz 
+
 function Pz = checkPz(x,y,whichI)
 
     % If the Image clicked is the first Image showing mainly table
