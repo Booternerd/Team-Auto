@@ -1,3 +1,13 @@
+% The Main GUI m files.
+% It is useless by itself
+% Run the FinalMain.m to run all the functionality
+
+% =========================================================================
+% MTRN4230 Robotics
+% Team Auto (Group 5)
+% 10/7/2016
+% =========================================================================
+
 function varargout = FinalGui(varargin)
 %FINALGUI M-file for FinalGui.fig
 %      FINALGUI, by itself, creates a new FINALGUI or raises the existing
