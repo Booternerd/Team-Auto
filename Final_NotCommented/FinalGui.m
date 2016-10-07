@@ -895,7 +895,7 @@ if clickngo == 1
        
     fprintf('Point and Clicked Enabled\n');
     
-% WITH CAMERA
+% Get a snapshot of video feed and undistort the snapshot.
     rgbImage = getsnapshot(handles.vid1);
     undisIm1 = undistortImage(rgbImage,cameraParams);
     handles.undisIm = undisIm1;
@@ -905,14 +905,6 @@ if clickngo == 1
     undisIm2 = undistortImage(rgbImage2,cameraParams);
     handles.undisIm2 = undisIm2;
     si2 = numel(undisIm2);
-
-    % Testing with still camera shots of robot table and conveyer area
-    
-% %     rgbImage1 = handles.vid1;
-% %     undisIm1 = undistortImage(rgbImage1,cameraParams);
-% %     
-% %     rgbImage2 = handles.vid2;
-% %     undisIm2 = undistortImage(rgbImage2,cameraParams);
 
     % Passing the Image by concatenating into one file to send through the
     % button call_back in the next GUI
@@ -924,14 +916,7 @@ if clickngo == 1
     
     % Opening the Click and Go GUI
     
-    clickGoGui(hObject,eventdata,handles);
-
-    % Attempting to grab handles from Click and Go GUI (unsuccessful)
-    
-    mywindow2 = clickGoGui(hObject,eventdata,handles);
-    myhandles2 = guihandles(mywindow2);
-    
-    
+    clickGoGui(hObject,eventdata,handles); 
 end;
     
 
@@ -966,27 +951,7 @@ function camera2_CreateFcn(hObject, eventdata, handles)
 % Hint: place code in OpeningFcn to populate camera2
 
 function i1call ( objectHandle , eventData,handles)
-% % %    axesHandle  = get(objectHandle,'Parent');
-% % %    coordinates = get(axesHandle,'CurrentPoint')
-% % %    coordinates = coordinates(1,1:2);
-% % %    xCam1 = coordinates(1);
-% % %    yCam1 = coordinates(2);
-% % %    
-% % %    res = [objectHandle.XData(2) objectHandle.YData(2)];
-% % %    xmax = 524;
-% % %    xmin = -531;
-% % %    ymax = 780;
-% % %    ymin = -20;
-% % % 
-% % %    columns = res(1);
-% % %    rows = res(2);
-% % %     
-% % %    realWorldUnitsPerPixel_x = (xmax - xmin)/columns;
-% % %    realWorldUnitsPerPixel_y = (ymax - ymin)/rows;
-% % %    
-% % %    realWorldX = xmin + realWorldUnitsPerPixel_x * xCam1;
-% % %    realWorldY = ymin + realWorldUnitsPerPixel_y * yCam1;
-% % %    
+
 
    
    
