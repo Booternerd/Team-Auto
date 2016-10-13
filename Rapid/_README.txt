@@ -1,1 +1,0 @@
-RAPID IS THE BEST!
