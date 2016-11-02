@@ -1,0 +1,117 @@
+MODULE MTRN_Rob_Data (SYSMODULE, NOSTEPIN, READONLY)
+
+ ! PREDEFINED DATA AND ROBOT CELL INFORMATION
+ !*******************************************
+
+ ! For the ABB IRB120 Robot in the Mechatronics Blockhouse Lab for the MTRN4230 Robotics Course 2014
+
+ ! TARGETS
+ !********
+
+ ! Calibrate Position for all Joints
+ CONST jointtarget jtCalibPos:=[[0,0,0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+
+ ! Home Position of the Table (T1) with tSCup touching Table
+ CONST robtarget pTableHome:=[[175,0,147],[0,0,-1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+
+ ! Home Position of the Conveyor (C1) with tSCup touching Conveyor
+ CONST robtarget pConvHome:=[[0,409,22],[0,-0.7071068,0.7071068,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+
+ ! Table & Conveyor Dimensions, References & Extent limits as Follows (X,Y,Z in mm):
+ !
+ !                                                       Conveyor Frame
+ !       ------>Y                                   |<-------- 616 -------->|
+ !       |                                          |   | Conveyor Belt |   |
+ !       |                                          |   |<---- 450 ---->|   |
+ !       |                            ||    --------|   |               |   |
+ !       v                            \/    |------||   |   0,409,22    |   |
+ !       X             Robot Centre  ---->  ||  + |||   |      +        |   |
+ !                                          ||    |||   |      C1       |   |
+ !     Robot Centre to edge of Table=129    -|    |_|   |               |   |
+ !   ----------------------------------------|    |-----------------------------------
+ !   |                                /\      ----                                   |
+ !   |                                ||      |  |                                   |
+ !   |     175,-520,147                     175,0,147                  175,520,147   |
+ !   |           +                              +                           +        |
+ !   |           T2                             T1                          T3       |
+ !   |                                                                               |
+ !   |                                                                               |
+ !   |                                    548.6,0,147                                |
+ !   |                                          +                                    |
+ !   |                                          T4                                   |
+ !   |                                                                               |
+ !   ---------------------------------------------------------------------------------
+
+ ! TOOL DATA
+ !**********
+
+ ! Suction Cup Tool Data
+ PERS tooldata tSCup:=[TRUE,[[0,0,65],[1,0,0,0]],[0.5,[0,0,20],[1,0,0,0],0,0,0]];
+ !
+ ! Suction Cup Face is 65mm in Z direction from Tool0
+
+ ! LOAD DATA 
+ !**********
+
+ ! Chocolate Bar Load Data
+ PERS loaddata loChoc:=[0.035,[0,0,3],[1,0,0,0],0,0,0];
+
+ !
+ ! Chocolate Bar Weight    : 35g
+ !
+ ! Chocolate Bar Dimensions: 114.5 x 53 x 7.5mm (Including Perspex substitute in wrapper)
+ !
+ ! Chocolate Box Dimensions: 214.0 x 119.0 x 46.0mm (Internal)
+ !                           219.5 x 121.0 x 48.0mm (External)
+ !
+ ! Chocolate Box References:
+ !
+ !                         -------------------------
+ !                         |----- ----- ----- -----|
+ !                         ||   | |   | |   | |   ||
+ !                         ||   | |   | |   | |   ||
+ !                         ||B4 | |B3 |+|B2 | |B1 ||
+ !                         ||   | |   | |   | |   ||
+ !                         ||   | |   | |   | |   ||
+ !                         |----- ----- ----- -----|
+ !                         -------------------------
+ !
+ ! NOTE: + marks centre of box and Conveyor Home Position C1
+
+ ! WORK OBJECT DATA
+ !*****************
+ !                                    [Uframe User co-ord System] [Oframe Object Co-ord System]
+ PERS wobjdata wTable:=[FALSE,TRUE,"",[[175,0,147],[1,0,0,0]],[[0,0,0],[1,0,0,0]]];
+ PERS wobjdata wConv:=[FALSE,TRUE,"",[[50,184,22],[0.5,-0.5,0.5,0.5]],[[1,1,1],[1,0,0,0]]];
+
+ ! WorkObject orientations for the Table and Conveyor
+ !
+ !                    |   |               |   |
+ !                    |   Y               |   |
+ !                    |   ^               |   |
+ !             -------|   |               |   |
+ !             |     ||   | \Wobj:=vConv  |   |
+ !             |  +  ||   |               |   |
+ !             |     ||   |               |   |
+ !             -------|  Zo------>X       |   |
+ !   ---------------------------------------------------
+ !               Zo----->Y                             |
+ !                |                                    |
+ !                | \Wobj:=vTable                      |
+ !                |                                    |
+ !                v                                    |
+ !                X                                    |
+ !                                                     |
+
+ ! COMMENTS
+ !*********
+
+ ! Digital I/O Names and Functions
+ ! DI10-1	ConStat	= Conveyor Status (Active = 1, Inactive = 0)
+ !
+ ! DO10-1	VacPwr	= Vacuum Power (Run = 1, Stop =0)
+ ! DO10-2	VacSol	= Vacuum Solenoid (Open = 1, Closed =0)
+ ! D010-3	ConRun	= Conveyer Start (Run = 1, Stop = 0)
+ ! D010-4	ConDir	= Conveyer Direction (Towards Robot = 1, Away from Robot = 0)
+
+ENDMODULE

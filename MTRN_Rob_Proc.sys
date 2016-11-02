@@ -1,0 +1,20 @@
+MODULE MTRN_Rob_Proc (SYSMODULE, NOSTEPIN, READONLY)
+
+ ! MTRN ROBOTICS COMMON PROCEDURES
+ !********************************
+ !
+ ! For the ABB IRB120 Robot in the Mechatronics Blockhouse Lab for the MTRN4230 Robotics Course 2014
+ !
+ 
+ PROC MoveToCalibPos()
+ !***************************************************************************************
+ !
+ ! Move to Calibrate Position
+ !
+ !***************************************************************************************
+
+ MoveAbsJ jtCalibPos,v400,fine,tool0;
+
+ ENDPROC
+
+ENDMODULE
