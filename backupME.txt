@@ -1,0 +1,71 @@
+            
+            if(exist('output_files/build_stacked.txt') & ReadFlag==0)
+                delete('output_files/build_stacked.txt');
+                if exist('blocks.mat')
+                     load('blocks.mat');
+                    Px = blocks(1,1:end);
+                    Py = blocks(2,1:end);
+                    orie = blocks(3,1:end);
+                    face = blocks(4,1:end);
+                    reach = blocks(5,1:end);
+                    
+                    % if coordinates are within the tables range Pz is 10cm
+                    % above table, if the coordinates are within the conveyer
+                    % range Pz is 10cm above the conveyer
+%                     Pz = checkPz(Px,Py,1);
+
+                    delete('blocks.mat');
+                    %                     delete('output_files/coordinates.txt');
+                end;
+
+                % switch coordinates for actual robot frame
+                [Px,Py] = getP(Px,Py);
+                tempX = Px;
+                tempY = Py;
+                Px = tempY
+                Py = tempX
+                if face == 1
+                    Pz = 151.82;
+                elseif face == 2
+                    Pz = 161.87;
+                elseif face ==3
+                    Pz = 218.19;
+                end
+
+                v=get(myhandles.SetSpeedPopUp,'Value');
+                % FARIS BUILD TOWER FROM STACKED
+               oo = 90;
+               for i=1:4
+                    xp = 300;
+                    yp = 0;
+                    Pxx = 300;
+                    Pyy = 100;
+                    oo = 90-oo;
+                    zp = 154.82;
+                    Pzz = 154.82 + 14.5*2;
+                    for n=1:3
+                        StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,Pzz,rad2deg(orie(i))-oo,xp,yp,zp,v);
+                        if((i==1 || i ==3) && (n==1))
+                            xp = xp + 24.5;
+                        elseif((i==1 || i ==3) && (n==2))
+                            xp = xp - 24.5*2;
+                        elseif((i==2 || i ==4) && (n==1))
+                            yp = yp + 24.5;
+                        elseif((i==2 || i ==4) && (n==2))
+                            yp = yp - 24.5*2;
+                        end
+                        pause(0.2);
+                        fwrite(socket, StringName);
+                        Pzz = Pzz - 14.5;
+                    end
+                    zp = zp + 14.5;
+                end
+                
+                set(myhandles.ReachabilityStatusText,'String','Yes');
+                SN=sprintf('Point and Click to x=%.2f,y=%.2f',Px,Py);
+                PushCommand(SN)
+                ReadFlag=1;
+                GetStatusFlag=0;
+            end
+        
+        

@@ -10,10 +10,12 @@
 
 function FinalMain()
     % main GUI Initialisation     
+    close all;
+    clear all;
     mywindow = FinalGui();
     myhandles = guihandles(mywindow);
     % Open the Starting Checklist GUI and disabled the FinalGui.m
-    checklist = 'GUI_checklist.m';
+    %checklist = 'GUI_checklist.m';
     %run(checklist);
     set(myhandles.ExitButton,'UserData',0);
     process_time=0;
@@ -105,91 +107,24 @@ function FinalMain()
         pause(0.1-process_time);
         
         
-        %% ===== WITHOUT ROBOT CONNECTION =============================
-        %% BUILD TOWER FROM STACKED
-            
-            
+        %% ===== WITHOUT ROBOT CONNECTION =============================         
             %Automate
             
-            if(exist('output_files/build_stacked.txt') & ReadFlag==0)
-                delete('output_files/build_stacked.txt');
-                if exist('blocks.mat')
-                     load('blocks.mat');
-                    Px = blocks(1,1:end);
-                    Py = blocks(2,1:end);
-                    orie = blocks(3,1:end);
-                    face = blocks(4,1:end);
-                    reach = blocks(5,1:end);
-                    
-                    % if coordinates are within the tables range Pz is 10cm
-                    % above table, if the coordinates are within the conveyer
-                    % range Pz is 10cm above the conveyer
-%                     Pz = checkPz(Px,Py,1);
-
-                    delete('blocks.mat');
-                    %                     delete('output_files/coordinates.txt');
-                end;
-
-                % switch coordinates for actual robot frame
-                [Px,Py] = getP(Px,Py);
-                tempX = Px;
-                tempY = Py;
-                Px = tempY
-                Py = tempX
-                if face == 1
-                    Pz = 151.82;
-                elseif face == 2
-                    Pz = 161.87;
-                elseif face ==3
-                    Pz = 218.19;
-                end
-
-                v=get(myhandles.SetSpeedPopUp,'Value');
-                % FARIS BUILD TOWER FROM STACKED
-               oo = 90;
-               for i=1:4
-                    xp = 300;
-                    yp = 0;
-                    Pxx = Px(i);
-                    Pyy = Py(i);
-                    oo = 90-oo;
-                    zp = 154.82;
-                    Pzz = 154.82 + 14*2;
-                    for n=1:3
-                        StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,Pzz,rad2deg(orie(i))-oo,xp,yp,zp,v);
-                        if((i==1 || i ==3) && (n==1))
-                            xp = xp + 24.5;
-                        elseif((i==1 || i ==3) && (n==2))
-                            xp = xp - 24.5*2;
-                        elseif((i==2 || i ==4) && (n==1))
-                            yp = yp + 24.5;
-                        elseif((i==2 || i ==4) && (n==2))
-                            yp = yp - 24.5*2;
-                        end
-                        pause(0.2);
-                        fwrite(socket, StringName);
-                        Pzz = Pzz - 14;
-                    end
-                    zp = zp + 14;
-                end
-                
-%                 pause(0.02)
-%                 StringName=sprintf('%.2f',Px);
-%                 fwrite(socket, StringName);
-                set(myhandles.ReachabilityStatusText,'String','Yes');
-                SN=sprintf('Point and Click to x=%.2f,y=%.2f',Px,Py);
-                PushCommand(SN)
-                ReadFlag=1;
-                GetStatusFlag=0;
-            end
-        
-        
+%             load('camera1ParamsLightsOn.mat');
+%             cameraParams = camera1ParamsLightsOn;
+%             
+%             myhandles.vid1;
+%             
+%             rgbImage = getsnapshot(myhandles.vid1);
+%             undisIm1 = undistortImage(rgbImage,cameraParams);
+%            
+%             imshow(undisIm);
+            
+            
+            
+            
         %% ==== TESTING FINISHED DELETE
-        
-        
-        
-        
-        
+      
         %====================
         % TCP Connection Routine
         %====================
@@ -317,11 +252,11 @@ function FinalMain()
                     && s1>=0 && s2>=0 && s3>=0 && s4>=0 && (s1+s2+s3+s4)<=numel(Py))
                     nb = 1;
                     if (s1>0)
-                        zp = 32.1 + 14;
+                        zp = 25.1 + 14;
                         for i=1:s1
                             Pxx = Px(nb);
                             Pyy = Py(nb);
-                            StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i))-box.b1(4),box.b1(1),box.b1(2),zp,2);
+                            StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(nb))-box.b1(4),box.b1(1),box.b1(2),zp,2);
                             pause(0.2);
                             fwrite(socket, StringName);
                             nb = nb + 1;
@@ -333,7 +268,7 @@ function FinalMain()
                         for i=1:s2
                             Pxx = Px(nb);
                             Pyy = Py(nb);
-                            StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i))-box.b2(4),box.b2(1),box.b2(2),zp,2);
+                            StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(nb))-box.b1(4),box.b2(1),box.b2(2),zp,2);
                             pause(0.2);
                             fwrite(socket, StringName);
                             nb = nb + 1;
@@ -345,7 +280,7 @@ function FinalMain()
                         for i=1:s3
                             Pxx = Px(nb);
                             Pyy = Py(nb);
-                            StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i))-box.b3(4),box.b3(1),box.b3(2),zp,2);
+                            StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(nb))-box.b1(4),box.b3(1),box.b3(2),zp,2);
                             pause(0.2);
                             fwrite(socket, StringName);
                             nb = nb + 1;
@@ -357,7 +292,7 @@ function FinalMain()
                         for i=1:s4
                             Pxx = Px(nb);
                             Pyy = Py(nb);
-                            StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i))-box.b4(4),box.b4(1),box.b4(2),zp,2);
+                            StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(nb))-box.b1(4),box.b4(1),box.b4(2),zp,2);
                             pause(0.2);
                             fwrite(socket, StringName);
                             nb = nb + 1;
@@ -366,11 +301,11 @@ function FinalMain()
                     end
                 else
                     SN=sprintf('Order lol');
-                PushCommand(SN)
+                    PushCommand(SN)
                 end
                 
                 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                
+                % add push conveyor
                 
                 pause(0.02)
                 ReadFlag=1;
@@ -507,69 +442,43 @@ function FinalMain()
 
                 v=get(myhandles.SetSpeedPopUp,'Value');
                 
-                oo = 90;
-               for i=1:4
-                    xp = 300;
-                    yp = 0;
-                    Pxx = 200;
-                    Pyy = 100;
-                    oo = 90-oo;
-                    zp = 151.82;
-                    Pzz = 151.82 + 14*2;
-                    for n=1:3
-                        StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,Pzz,0-oo,xp,yp,zp,v);
-                        if((i==1 || i ==3) && (n==1))
-                            xp = xp + 70;
-                        elseif((i==1 || i ==3) && (n==2))
-                            xp = xp - 70*2;
-                        elseif((i==2 || i ==4) && (n==1))
-                            yp = yp + 70;
-                        elseif((i==2 || i ==4) && (n==2))
-                            yp = yp - 70*2;
-                        end
-                        pause(0.2);
-                        fwrite(socket, StringName);
-                        Pzz = Pzz - 14;
-                    end
-                    zp = zp + 14;
-                    Pyy = Pyy +100;
-                end
+               
                 % FARIS DONE 4 PILES
                 xp = 200;
                 yp = 100;
                 Pzz = 154.82;
-%                 for i=1:numel(Py)
-%                     if (i <= 4)
-%                         Pxx = Px(i);
-%                         Pyy = Py(i);   
-%                         StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i)),xp,yp,Pzz,v);
-%                         pause(0.2);
-%                         fwrite(socket, StringName);
-%                         yp = yp + 100;
-%                         if (i == 4) yp = 100; end
-%                     elseif (i <= 8)
-%                         Pxx = Px(i);
-%                         Pyy = Py(i);   
-%                         StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i)),xp,yp,Pzz+14,v);
-%                         pause(0.2);
-%                         fwrite(socket, StringName);
-%                         yp = yp + 100;
-%                         if (i == 8) yp = 100; end
-%                      elseif (i <= 12)
-%                         Pxx = Px(i);
-%                         Pyy = Py(i);   
-%                         StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i)),xp,yp,Pzz+(14*2),v);
-%                         pause(0.2);
-%                         fwrite(socket, StringName);
-%                         yp = yp + 100;
-%                     end
-%                 end
+                for i=1:numel(Py)
+                    if (i <= 4)
+                        Pxx = Px(i);
+                        Pyy = Py(i);   
+                        StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i)),xp,yp,Pzz,v);
+                        pause(0.2);
+                        fwrite(socket, StringName);
+                        yp = yp + 100;
+                        if (i == 4) yp = 100; end
+                    elseif (i <= 8)
+                        Pxx = Px(i);
+                        Pyy = Py(i);   
+                        StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i)),xp,yp,Pzz+14,v);
+                        pause(0.2);
+                        fwrite(socket, StringName);
+                        yp = yp + 100;
+                        if (i == 8) yp = 100; end
+                     elseif (i <= 12)
+                        Pxx = Px(i);
+                        Pyy = Py(i);   
+                        StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,154.82,rad2deg(orie(i)),xp,yp,Pzz+(14*2),v);
+                        pause(0.2);
+                        fwrite(socket, StringName);
+                        yp = yp + 100;
+                    end
+                end
                 
 %                 pause(0.02)
 %                 StringName=sprintf('%.2f',Px);
 %                 fwrite(socket, StringName);
                 set(myhandles.ReachabilityStatusText,'String','Yes');
-                SN=sprintf('Point and Click to x=%.2f,y=%.2f',Px,Py);
+                SN=sprintf('Done stacking to 4 Pos on table');
                 PushCommand(SN)
                 ReadFlag=1;
                 GetStatusFlag=0;
@@ -616,30 +525,30 @@ function FinalMain()
                 v=get(myhandles.SetSpeedPopUp,'Value');
                 % FARIS BUILD TOWER FROM STACKED
                oo = 90;
+               Pxx = 200;
+               Pyy = 100;
+               zp = 154.82;
                for i=1:4
                     xp = 300;
                     yp = 0;
-                    Pxx = 200;
-                    Pyy = 100;
-                    oo = 90-oo;
-                    zp = 151.82;
-                    Pzz = 151.82 + 14*2;
+                    oo = 90-oo;  
+                    Pzz = 154.82 + 14.5*2;
                     for n=1:3
                         StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,Pzz,0-oo,xp,yp,zp,v);
                         if((i==1 || i ==3) && (n==1))
-                            xp = xp + 70;
+                            xp = xp + 25;
                         elseif((i==1 || i ==3) && (n==2))
-                            xp = xp - 70*2;
+                            xp = xp - (25)*2 - 2;
                         elseif((i==2 || i ==4) && (n==1))
-                            yp = yp + 70;
+                            yp = yp + 25;
                         elseif((i==2 || i ==4) && (n==2))
-                            yp = yp - 70*2;
+                            yp = yp - (25)*2 - 2;
                         end
                         pause(0.2);
                         fwrite(socket, StringName);
-                        Pzz = Pzz - 14;
+                        Pzz = Pzz - 14.5;
                     end
-                    zp = zp + 14;
+                    zp = zp + 14.5;
                     Pyy = Pyy +100;
                 end
                 
@@ -647,7 +556,7 @@ function FinalMain()
 %                 StringName=sprintf('%.2f',Px);
 %                 fwrite(socket, StringName);
                 set(myhandles.ReachabilityStatusText,'String','Yes');
-                SN=sprintf('Point and Click to x=%.2f,y=%.2f',Px,Py);
+                SN=sprintf('Build Tower From Stack');
                 PushCommand(SN)
                 ReadFlag=1;
                 GetStatusFlag=0;
@@ -675,13 +584,13 @@ function FinalMain()
                     delete('blocks.mat');
                     %                     delete('output_files/coordinates.txt');
                 end;
-
+                
                 % switch coordinates for actual robot frame
                 [Px,Py] = getP(Px,Py);
                 tempX = Px;
                 tempY = Py;
-                Px = tempY
-                Py = tempX
+                Px = tempY;
+                Py = tempX;
                 if face == 1
                     Pz = 151.82;
                 elseif face == 2
@@ -689,30 +598,67 @@ function FinalMain()
                 elseif face ==3
                     Pz = 218.19;
                 end
-
-                v=get(myhandles.SetSpeedPopUp,'Value');
                 
-                % FARIS DONE BUILD TOWER FROM SCATTERED
+                %==========
+                %NORMALISE
+                %==========
+                
+                % NormalizeSweepGet
+                sweepget = find(face == 1);
+                sweepgetidx = sweepget(1,1);
+                pause(0.2);
+                StringName=sprintf('C NSG %.2f %.2f %.2f',Pxx(sweepgetidx),Pyy(sweepgetidx),orie(sweepgetidx)*180/pi);
+                fwrite(socket, StringName);
+                Px(sweepgetidx) = [];
+                Py(sweepgetidx) = [];
+                orie(sweepgetidx) = [];
+                % NormalizeSweep
+                for j = 1:length(Px)
+                    pause(0.2);
+                    StringName=sprintf('C NS %.2f %.2f',Pxx(j),Pyy(j));
+                    fwrite(socket, StringName);
+                end
+                % Pause until normalize sweep done
+                pause(20);
+                % VacSol Off
+                pause(0.2);
+                StringName=sprintf('C SetVacSol 0');
+                fwrite(socket, StringName);
+                % Snapshot table
+                %INSERTCODE
+                % NormalizeDrop
+                drop = find(face == 2);
+                for j = 1:length(drop)
+                    pause(0.2);
+                    StringName=sprintf('C ND %.2f %.2f',Pxx(drop(j)),Pyy(drop(j)));
+                    fwrite(socket, StringName);
+                end
+              
+                
+                v=get(myhandles.SetSpeedPopUp,'Value');
+                % Get blocks from conveyor and put it in Pz and Py
+                
+                % FARIS par-DONE BUILD TOWER FROM SCATTERED
                if (numel(Py)>=12)
                    oo = 90;
+                   zp = 154.82;
                    for i=1:4
                         xp = 300;
                         yp = 0;
                         oo = 90-oo;
-                        zp = 154.82;
                         Pzz = 154.82;
                         for n=1:3
                             Pxx = Px((i-1)*3+n);
                             Pyy = Py((i-1)*3+n);
                             StringName=sprintf('C MF %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f',Pxx,Pyy,Pzz,rad2deg(orie(i))-oo,xp,yp,zp,v);
                             if((i==1 || i ==3) && (n==1))
-                                xp = xp + 24.5;
+                                xp = xp + 30;
                             elseif((i==1 || i ==3) && (n==2))
-                                xp = xp - 24.5*2;
+                                xp = xp - 30*2;
                             elseif((i==2 || i ==4) && (n==1))
-                                yp = yp + 24.5;
+                                yp = yp + 30;
                             elseif((i==2 || i ==4) && (n==2))
-                                yp = yp - 24.5*2;
+                                yp = yp - 30*2;
                             end
                             pause(0.2);
                             fwrite(socket, StringName);
@@ -1522,10 +1468,9 @@ function FinalMain()
                 ReadFlag=1;
                 GetStatusFlag=0;
             end
-            %%
-            %% Stop FARIS == COPY THIS JEFF ==============================
+            % Stop FARIS == COPY THIS JEFF ==============================
             if(get(myhandles.stopPushButton,'UserData')==1 & ReadFlag==0)
-                set(myhandles.stopPushButtonToggle, 'UserData',3);
+                set(myhandles.stopPushButton, 'UserData',3);
                 set(myhandles.VacuumRadioButton, 'Enable','off');
                 set(myhandles.SolenoidRadioButton, 'Enable','off');
                 set(myhandles.ConveyorRadioButton, 'Enable','off');
@@ -1570,7 +1515,7 @@ function FinalMain()
                 StringName='S GetAll';
                 fwrite(socket, StringName);
                 ReadFlag=1;
-                display('b')
+ 
             end
             %%
             %====================

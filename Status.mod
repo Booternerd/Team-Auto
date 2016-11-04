@@ -2,7 +2,7 @@ MODULE Status
     ! ASD
     ! Persistent variable declaration
     PERS num StatusIndex;
-    PERS string StatusQueue{10};
+    PERS string StatusQueue{20};
     PERS bool NotClose;
     PERS bool Reachability;
     
@@ -10,7 +10,7 @@ MODULE Status
     ! The host and port that we will be listening for a connection on.
     CONST string Host := "192.168.125.1";
 !    CONST string Host := "127.0.0.1";   ! Virtual
-    CONST num Port := 1051;
+    CONST num Port := 1031;
     
     ! The socket connected to the client.
     VAR socketdev ClientSocket;
@@ -29,7 +29,8 @@ MODULE Status
         OpenConnection2;
 
         StatusIndex := 1;
-        StatusQueue := ["","","","","","","","","",""];
+        StatusQueue := ["","","","","","","","","","","","","","","","","","","",""];
+
         NotClose := TRUE;
         Reachability := TRUE;
         WHILE NotClose DO

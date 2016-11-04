@@ -3,10 +3,8 @@ MODULE Receive
     ! Persistent variable declaration
     PERS num ControlIndex;
     PERS num StatusIndex;
-    PERS num DummyIndex;
-    PERS string ControlQueue{10};
-    !PERS string DummyQueue{10};
-    PERS string StatusQueue{10};
+    PERS string ControlQueue{20};
+    PERS string StatusQueue{20};
     PERS bool NotClose;
     PERS bool Reachability;
     
@@ -14,7 +12,7 @@ MODULE Receive
     ! The host and port that we will be listening for a connection on.
     CONST string Host := "192.168.125.1";
 !    CONST string Host := "127.0.0.1";   ! Virtual
-    CONST num Port := 1050;
+    CONST num Port := 1030;
     
     ! The socket connected to the client.
     VAR socketdev ClientSocket;
@@ -24,10 +22,12 @@ MODULE Receive
     
     VAR intnum int_move_stop; 
     
+    VAR jointtarget ttt;
+    
     ! Main function
     PROC ReceiveMain()
-        ControlQueue:=["","","","","","","","","",""];
-        !DummyQueue:=["","","","","","","","","",""];
+        ControlQueue := ["","","","","","","","","","","","","","","","","","","",""];
+        StatusQueue := ["","","","","","","","","","","","","","","","","","","",""];
         IDelete int_move_stop;
         CONNECT int_move_stop WITH trap_move_stop;
         ISignalDI DI10_1, 0, int_move_stop;
@@ -36,7 +36,6 @@ MODULE Receive
         ! Set variables
         ControlIndex := 1;
         StatusIndex := 1;
-        !DummyIndex := 1;
         NotClose := TRUE;
         ! Infinite loop
         WHILE NotClose DO
@@ -48,7 +47,6 @@ MODULE Receive
             IF Type = "C" THEN
                 !SocketReceive ClientSocket \Str := ReceivedString;
                 PushMessage("Control");
-                !PushDummy;
             ! Else if Get instruction, push message to Get queue
             ELSEIF Type = "S" THEN
                 PushMessage("Status");
@@ -58,6 +56,15 @@ MODULE Receive
             ELSEIF Type = "Start" THEN
 !                RestoPath;
                 StartMove;
+            ELSEIF Type = "Stop" THEN
+                StopMove;
+                ClearPath;
+                ControlQueue := ["","","","","","","","","","","","","","","","","","","",""];
+                StatusQueue := ["","","","","","","","","","","","","","","","","","","",""];
+                ControlIndex := 1;
+                StatusIndex := 1;
+                Message := "Home";
+                PushMessage("Control");
             ! Else if Close instruction, close socket
             ELSEIF Type = "Close" THEN
                 NotClose := FALSE;
@@ -118,20 +125,13 @@ MODULE Receive
     ENDPROC
     
     PROC PushMessage(string Queue)
-        IF Queue = "Control" AND ControlIndex < 10 THEN
+        IF Queue = "Control" AND ControlIndex < 20 THEN
             ControlQueue{ControlIndex} := Message;
             ControlIndex := ControlIndex + 1;
-        ELSEIF Queue = "Status" AND StatusIndex < 10 THEN
+        ELSEIF Queue = "Status" AND StatusIndex < 20 THEN
             StatusQueue{StatusIndex} := Message;
             StatusIndex := StatusIndex + 1;
         ENDIF
     ENDPROC
-    
-    !PROC PushDummy()
-    !    IF DummyIndex<10 THEN
-    !        DummyQueue{DummyIndex} := ReceivedString;
-    !        DummyIndex := DummyIndex + 1;
-    !    ENDIF
-    !ENDPROC
 
 ENDMODULE

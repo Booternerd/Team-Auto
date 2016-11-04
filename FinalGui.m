@@ -1305,6 +1305,7 @@ elseif (Auto_Mate == 1 && get(handles.AutoMateSelect,'Value')==3 && get(handles.
     
     rgbImage1 = getsnapshot(handles.vid1);
     imwrite(rgbImage1, 'rgbImage1.png');
+    set(handles.fulfilldisp,'Visible','on');
     
     
 
@@ -1757,4 +1758,34 @@ if get(handles.stopPushButton, 'Value')==1
 end
 
 %% ================TO HERE JEFF ===========================================
+
+% % function SV_Callback(hObject, eventdata, handles)
+% % % hObject    handle to AutoMate (see GCBO)
+% % % eventdata  reserved - to be defined in a future version of MATLAB
+% % % handles    structure with handles and user data (see GUIDATA)
+% % 
+% % % Loading camera params for the snapshotted videofeed (Click and Go)
+% % load('camera1ParamsLightsOn.mat');
+% % cameraParams = camera1ParamsLightsOn;
+% % 
+% % % When 'Enable To Point' Button is pressed grab screenshot of both video
+% % % feeds, then send into the Click and Go GUI
+% % 
+% % SV = get(handles.SV,'Value');
+% % 
+% % if (SV == 1 && get(handles.AutoMateSelect,'Value')==2 && get(handles.Unload2Table,'UserData')==1)
+% %     % Unload from box
+% %     set(handles.Unload2Table,'UserData',0);
+% %     display('Unload Jengas');
+% %     fprintf('AutoMate Enabled & Unload Jengas from the box\n');
+% %     rgbImage2 = getsnapshot(handles.vid2);
+% %     ConveyorVision(rgbImage2);
+% %     set(handles.AutoMateSelect,'UserData',2);
+% %     
+% % end;
+% %     
+% % 
+% % 
+% % end;
+
 

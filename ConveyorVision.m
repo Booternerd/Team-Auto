@@ -98,8 +98,10 @@ function detectBox(BW)
     box.area=[uc-ax,vc+ay];
     
     theta=ib.theta_;
-    theta=-theta2angle(theta);
-    jenga_theta=theta+1/2*pi;
+    theta=theta2angle(theta);
+    jenga_theta=theta+pi/2;
+    jenga_theta=mod(jenga_theta+pi/2,pi)-pi/2;
+    jenga_theta=rad2deg(jenga_theta);
 %     hold on;
 
     box.x=ib.uc_;
@@ -107,10 +109,10 @@ function detectBox(BW)
     box.a=theta;
     
     constant=36;
-    box.b1=[uc+constant*cos(theta);vc+constant*sin(theta);box.box_height;rad2deg(jenga_theta);1];
-    box.b2=[uc+3*constant*cos(theta);vc+3*constant*sin(theta);box.box_height;rad2deg(jenga_theta);1];
-    box.b3=[uc-constant*cos(theta);vc-constant*sin(theta);box.box_height;rad2deg(jenga_theta);1];
-    box.b4=[uc-3*constant*cos(theta);vc-3*constant*sin(theta);box.box_height;rad2deg(jenga_theta);1];
+    box.b1=[uc+constant*cos(-theta);vc+constant*sin(-theta);box.box_height;jenga_theta;1];
+    box.b2=[uc+3*constant*cos(-theta);vc+3*constant*sin(-theta);box.box_height;(jenga_theta);1];
+    box.b3=[uc-constant*cos(-theta);vc-constant*sin(-theta);box.box_height;(jenga_theta);1];
+    box.b4=[uc-3*constant*cos(-theta);vc-3*constant*sin(-theta);box.box_height;(jenga_theta);1];
     plot(box.b1(1),box.b1(2),'*y');
     plot(box.b2(1),box.b2(2),'*y');
     plot(box.b3(1),box.b3(2),'*y');
@@ -302,7 +304,7 @@ end
 
 function ret=theta2angle(theta)
     angle=theta*-1;
-%     plot([uc,uc+cos(theta).*100],[vc,vc+sin(theta).*100],'Color','r','LineWidth',2)
+%      plot([uc,uc+cos(theta).*100],[vc,vc+sin(theta).*100],'Color','r','LineWidth',2)
     if (angle>pi/2) %2
         angle= -(pi-abs(angle));
     elseif (angle<-pi/2) %3
